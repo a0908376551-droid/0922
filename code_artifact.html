@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>設計師個人名片</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+        .card-shadow {
+            box-shadow: 0 25px 50px -12px rgba(255, 255, 255, 0.08);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.3s ease, background-color 0.5s ease;
+        }
+        .card-shadow:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 45px 90px -15px rgba(255, 255, 255, 0.22);
+        }
+    </style>
+</head>
+<body id="pageBody" class="h-full flex items-center justify-center p-4 selection:bg-white selection:text-black">
+
+    <main class="w-full max-w-sm mx-auto relative">
+        
+        <div class="absolute -top-14 right-0">
+            <button onclick="toggleTheme()" id="themeBtn" class="text-xs px-3 py-1.5 rounded-lg border border-white/20 bg-white/5 hover:bg-white/10 transition-colors tracking-wide flex items-center gap-1.5 backdrop-blur-sm">
+                <span id="themeIndicator" class="w-2 h-2 rounded-full bg-white"></span>
+                <span id="themeText">風格：極黑</span>
+            </button>
+        </div>
+
+        <div id="cardBox" class="bg-black border border-white/25 rounded-2xl p-8 text-center card-shadow relative overflow-hidden hover:border-white/70">
+            
+            <!-- Minimalist decorative corner accent -->
+            <div id="cornerAccent" class="absolute top-4 right-4 w-2 h-2 bg-white rounded-full opacity-50 animate-pulse"></div>
+
+            <div class="mb-6 inline-block relative group">
+                <div id="avatarContainer" class="w-28 h-28 mx-auto rounded-full bg-white/10 border-2 border-white/30 flex items-center justify-center overflow-hidden transition-transform duration-300 group-hover:scale-105">
+                    <!-- Placeholder SVG Icon representing minimalist portrait -->
+                    <svg id="avatarIcon" class="w-14 h-14 text-white/70 transition-colors duration-500" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                </div>
+            </div>
+
+            <h1 class="text-2xl font-bold tracking-tight mb-1">王堇榕</h1>
+            <p class="text-xs uppercase tracking-widest opacity-50 font-medium mb-8">Senior UI/UX Designer</p>
+
+            <p class="text-sm opacity-70 font-light leading-relaxed mb-8 px-2">
+                專注於極簡主義美學、數位產品互動體驗及高對比視覺語言設計。
+            </p>
+
+            <button onclick="handleContactClick()" id="contactBtn" class="w-full py-3.5 px-6 bg-white text-black font-medium text-sm rounded-xl tracking-wide transition-all duration-200 hover:bg-white/90 active:scale-95 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black">
+                聯絡我
+            </button>
+
+            <div id="toast" class="mt-4 text-xs tracking-wider opacity-60 transition-opacity duration-300">
+                信箱已複製到剪貼簿：alex@minimal.design
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+        const themes = [
+            {
+                name: "極黑",
+                bgClass: "bg-black",
+                textColor: "text-white",
+                cardBg: "bg-black",
+                borderColor: "border-white/25",
+                hoverBorder: "hover:border-white/70",
+                btnBg: "bg-white text-black hover:bg-white/90",
+                indicatorColor: "bg-white",
+                avatarBg: "bg-white/10",
+                avatarBorder: "border-white/30",
+                avatarColor: "text-white/70"
+            },
+            {
+                name: "純白",
+                bgClass: "bg-zinc-100",
+                textColor: "text-zinc-900",
+                cardBg: "bg-white",
+                borderColor: "border-zinc-200",
+                hoverBorder: "hover:border-zinc-400",
+                btnBg: "bg-zinc-900 text-white hover:bg-zinc-800",
+                indicatorColor: "bg-zinc-900",
+                avatarBg: "bg-zinc-100",
+                avatarBorder: "border-zinc-300",
+                avatarColor: "text-zinc-700"
+            },
+            {
+                name: "淺紫",
+                bgClass: "bg-purple-50",
+                textColor: "text-purple-950",
+                cardBg: "bg-white/80 backdrop-blur-md",
+                borderColor: "border-purple-200",
+                hoverBorder: "hover:border-purple-400",
+                btnBg: "bg-purple-900 text-white hover:bg-purple-800",
+                indicatorColor: "bg-purple-600",
+                avatarBg: "bg-purple-100",
+                avatarBorder: "border-purple-300",
+                avatarColor: "text-purple-700"
+            }
+        ];
+
+        let currentThemeIndex = 0;
+
+        function toggleTheme() {
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            applyTheme(themes[currentThemeIndex]);
+        }
+
+        function applyTheme(theme) {
+            const body = document.getElementById('pageBody');
+            const cardBox = document.getElementById('cardBox');
+            const contactBtn = document.getElementById('contactBtn');
+            const themeText = document.getElementById('themeText');
+            const themeIndicator = document.getElementById('themeIndicator');
+            const themeBtn = document.getElementById('themeBtn');
+            const avatarContainer = document.getElementById('avatarContainer');
+            const avatarIcon = document.getElementById('avatarIcon');
+
+            body.className = `h-full flex items-center justify-center p-4 selection:bg-white selection:text-black transition-colors duration-500 ${theme.bgClass} ${theme.textColor}`;
+            cardBox.className = `rounded-2xl p-8 text-center card-shadow relative overflow-hidden transition-all duration-300 ${theme.cardBg} border ${theme.borderColor} ${theme.hoverBorder}`;
+            contactBtn.className = `w-full py-3.5 px-6 font-medium text-sm rounded-xl tracking-wide transition-all duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 ${theme.btnBg}`;
+
+            // Update avatar styling based on theme
+            avatarContainer.className = `w-28 h-28 mx-auto rounded-full border-2 flex items-center justify-center overflow-hidden transition-all duration-300 group-hover:scale-105 ${theme.avatarBg} ${theme.avatarBorder}`;
+            avatarIcon.className = `w-14 h-14 transition-colors duration-500 ${theme.avatarColor}`;
+
+            themeText.innerText = `風格：${theme.name}`;
+            themeIndicator.className = `w-2 h-2 rounded-full ${theme.indicatorColor}`;
+            
+            if (theme.name === '純白' || theme.name === '淺紫') {
+                themeBtn.className = "text-xs px-3 py-1.5 rounded-lg border border-purple-300 bg-purple-100/50 hover:bg-purple-200/50 text-purple-900 transition-colors tracking-wide flex items-center gap-1.5 backdrop-blur-sm";
+            } else {
+                themeBtn.className = "text-xs px-3 py-1.5 rounded-lg border border-white/20 bg-white/5 hover:bg-white/10 text-white transition-colors tracking-wide flex items-center gap-1.5 backdrop-blur-sm";
+            }
+        }
+
+        function handleContactClick() {
+            const email = "alex@minimal.design";
+            const textArea = document.createElement("textarea");
+            textArea.value = email;
+            textArea.style.position = "fixed";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                document.execCommand('copy');
+                showToast();
+            } catch (err) {
+                console.error('無法複製', err);
+            }
+            document.body.removeChild(textArea);
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.style.opacity = '1';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+            }, 3000);
+        }
+    </script>
+
+</body>
+</html>
